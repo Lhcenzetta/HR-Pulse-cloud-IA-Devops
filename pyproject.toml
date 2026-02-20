@@ -1,0 +1,10 @@
+[project]
+name = "hr-pulse-cloud-ia-devops"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "azure-ai-textanalytics>=5.3.0",
+    "dotenv>=0.9.9",
+]

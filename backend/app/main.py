@@ -92,5 +92,10 @@ def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfi
     return {"detail" : "User deleted successfully"}
 
 
+@app.post("/Predict")
+def get_predict():
+    return {"hello"}
+
+
 
   

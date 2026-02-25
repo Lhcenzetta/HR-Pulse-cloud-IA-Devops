@@ -5,17 +5,20 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
-data_path = os.getenv("data_url")
+
+data_path = f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('database')}"
 
 engine = create_engine(data_path)
 
-sessionLocal = sessionmaker(bind=engine)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
 def get_db():
-    db = sessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+

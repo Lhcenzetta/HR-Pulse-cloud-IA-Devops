@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends,HTTPException, status
 from database import engine, get_db, Base
-from shcema import CreateUser, Checkuser
+from shcema import CreateUser, Checkuser,listcheck
 from sqlalchemy.orm import Session
 from models.user import User
+from models.job_skills import JobOffer
 from fastapi.security import HTTPAuthorizationCredentials,HTTPBearer
 from datetime import datetime
 from passlib.context import CryptContext
@@ -11,7 +12,7 @@ from jose import jwt, JWTError
 import os
 import time
 from dotenv import load_dotenv
-
+import pandas as pd 
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
@@ -81,7 +82,35 @@ def login(user: Checkuser , db:Session = Depends(get_db)):
     return{"token" : token , "token_type" : "bearer"}
 
 
+@app.post("/Predict")
+def get_predict(dict: listcheck , cre = Depends(verfiy_token)):
+    test_data = pd.DataFrame({
+        'rating': [dict.rating],
+        'age': [dict.age],
+        'size': [dict.size],
+        'type_of_ownership': [dict.type_of_ownership],
+        'industry': [dict.industry],
+        'sector': [dict.sector]
+        })
+    predicted_salary = model.predict(test_data)
+    return {f"Predicted Salary: {predicted_salary[0]}$"}
 
+@app.get("/get_all_jobs_with_skills")
+def job_skills(db : Session = Depends(get_db),cre = Depends(verfiy_token)):
+    return db.query(JobOffer).filter().all()
+
+
+@app.get("/jobs/{id}")
+def get_job_id(id: int, db: Session = Depends(get_db),cre = Depends(verfiy_token)):
+    job = db.query(JobOffer).filter(JobOffer.id == id).first()
+
+    if job is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Job id does not exist"
+        )
+
+    return job
 @app.delete("/delete_user/{user_id}")
 def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfiy_token)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -91,10 +120,6 @@ def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfi
     db.commit()
     return {"detail" : "User deleted successfully"}
 
-
-@app.post("/Predict")
-def get_predict():
-    return {"ji"}
 
 
 

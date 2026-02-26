@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-data_path = f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('database')}"
-# data_path = os.getenv("data_url")
+# data_path = f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('database')}"
+data_path = os.getenv("data_url")
 
 engine = create_engine(data_path)
 

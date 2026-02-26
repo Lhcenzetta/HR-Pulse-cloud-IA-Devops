@@ -17,8 +17,8 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 load_dotenv()
-
-
+model_path  = os.getenv("model_path")
+model = joblib.load(model_path)
 algorithme = "HS256"
 SECRET_KEY  = os.getenv("SECRET_KEY")
 barear_chema = HTTPBearer()
@@ -94,7 +94,7 @@ def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfi
 
 @app.post("/Predict")
 def get_predict():
-    return {"hello"}
+    return {"ji"}
 
 
 

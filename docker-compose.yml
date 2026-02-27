@@ -1,6 +1,8 @@
 services:
   backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
     env_file:
@@ -8,13 +10,13 @@ services:
     environment:
       - data_url=${data_url}
       - SECRET_KEY=${SECRET_KEY}
-      - model_path=${model_path}
+      - model_path=/app/ml/model/model_salary_prediction.pkl
 
   frontend:
     build: ./frontend
     ports:
       - "3000:3000"
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://backend:8000
     depends_on:
       - backend

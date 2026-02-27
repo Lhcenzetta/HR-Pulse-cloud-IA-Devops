@@ -1,14 +1,18 @@
-[dependency-groups]
-dev = [
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Backend for HR-Pulse"
+dependencies = [
     "dotenv>=0.9.9",
     "fastapi>=0.131.0",
     "joblib>=1.5.3",
     "pandas>=3.0.1",
     "passlib[argon2,bcrypt]>=1.7.4",
-    "psycopg2>=2.9.11",
+    "psycopg2-binary>=2.9.11",
     "pyodbc>=5.3.0",
     "python-jose[cryptography]>=3.5.0",
     "scikit-learn>=1.8.0",
     "sqlalchemy>=2.0.46",
     "uvicorn>=0.41.0",
 ]
+requires-python = ">=3.13"

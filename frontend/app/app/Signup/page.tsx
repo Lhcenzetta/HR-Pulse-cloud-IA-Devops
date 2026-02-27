@@ -11,7 +11,7 @@ export default function Signup() {
     const [success, setSuccess] = useState('');
     const router = useRouter();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
@@ -30,7 +30,7 @@ export default function Signup() {
                     'Content-Type': 'application/json',
                     'accept': 'application/json'
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     "username": username,
                     "passwordhash": password,
                     "createdate": new Date().toISOString()
@@ -38,7 +38,7 @@ export default function Signup() {
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 setSuccess('Successfully registered! Redirecting to login...');
                 setTimeout(() => {
@@ -57,7 +57,7 @@ export default function Signup() {
     return (
         <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 font-sans dark:bg-zinc-950">
             <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 p-10 dark:bg-zinc-900 dark:border-zinc-800">
-                
+
                 <div className="text-center mb-10">
                     <h1 className="text-3xl font-bold text-slate-900 tracking-tight dark:text-white">Create Account</h1>
                     <p className="text-slate-500 mt-2 text-sm uppercase tracking-wider font-semibold dark:text-zinc-400">
@@ -86,42 +86,42 @@ export default function Signup() {
                 <form onSubmit={handleSubmit} className="space-y-5">
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Username</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             required
                             placeholder="Choose a username"
                             className="modern-input dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
 
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             required
                             placeholder="Create a password"
                             className="modern-input dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Confirm Password</label>
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             required
                             placeholder="Repeat password"
                             className="modern-input dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
-                            value={confirmPassword} 
-                            onChange={(e) => setConfirmPassword(e.target.value)} 
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                         />
                     </div>
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={loading}
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-100 disabled:opacity-70 mt-4 flex items-center justify-center dark:shadow-none"
                     >

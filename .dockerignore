@@ -1,0 +1,15 @@
+# Docker ignore file
+.git
+.venv
+backend/.venv
+frontend/app/node_modules
+frontend/app/.next
+**/.pytest_cache
+**/__pycache__
+*.pyc
+
+# Ensure uv.lock and pyproject.toml are NOT ignored even if in .gitignore
+!backend/uv.lock
+!backend/pyproject.toml
+!uv.lock
+!pyproject.toml

@@ -17,6 +17,7 @@ export default function JobList() {
     const [error, setError] = useState('');
     const [selectedJob, setSelectedJob] = useState<Job | null>(null);
     const [searchId, setSearchId] = useState('');
+    const [searchTitle, setSearchTitle] = useState('');
     const [isSearching, setIsSearching] = useState(false);
     const [searchMessage, setSearchMessage] = useState('');
 
@@ -76,18 +77,51 @@ export default function JobList() {
         }
     };
 
+    const handleSearchByTitle = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!searchTitle.trim()) return;
+
+        setIsSearching(true);
+        setSearchMessage('');
+        const token = localStorage.getItem('token');
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/jobs/search/?title=${encodeURIComponent(searchTitle)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.length > 0) {
+                    setJobs(data);
+                    setSearchTitle('');
+                } else {
+                    setSearchMessage('No jobs found with that title.');
+                }
+            } else {
+                setSearchMessage('Error searching for jobs.');
+            }
+        } catch (err) {
+            setSearchMessage('Network error during search.');
+        } finally {
+            setIsSearching(false);
+        }
+    };
+
     if (loading) return <div className="flex justify-center py-20"><div className="h-10 w-10 border-4 border-blue-600/30 border-t-blue-600 rounded-full animate-spin" /></div>;
 
     return (
         <div className="relative">
             {/* Search Bar */}
-            <div className="mb-8">
+            <div className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <form onSubmit={handleSearchById} className="flex gap-2">
                     <div className="relative flex-1">
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">#</span>
                         <input
                             type="number"
-                            placeholder="Search job by ID (e.g. 1)"
+                            placeholder="Job ID"
                             value={searchId}
                             onChange={(e) => setSearchId(e.target.value)}
                             className="w-full pl-12 pr-4 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all dark:text-white"
@@ -98,15 +132,35 @@ export default function JobList() {
                         disabled={isSearching || !searchId}
                         className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-200 dark:shadow-none whitespace-nowrap"
                     >
-                        {isSearching ? 'Searching...' : 'Search ID'}
+                        {isSearching ? '...' : 'Search ID'}
                     </button>
                 </form>
-                {searchMessage && (
-                    <p className="mt-2 text-sm font-medium text-red-500 animate-in fade-in slide-in-from-top-1">
-                        {searchMessage}
-                    </p>
-                )}
+
+                <form onSubmit={handleSearchByTitle} className="flex gap-2">
+                    <div className="relative flex-1">
+                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400">🔍</span>
+                        <input
+                            type="text"
+                            placeholder="Search by Job Title"
+                            value={searchTitle}
+                            onChange={(e) => setSearchTitle(e.target.value)}
+                            className="w-full pl-12 pr-4 py-3 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all dark:text-white"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={isSearching || !searchTitle}
+                        className="px-6 py-3 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-blue-200 dark:shadow-none whitespace-nowrap"
+                    >
+                        {isSearching ? '...' : 'Search Name'}
+                    </button>
+                </form>
             </div>
+            {searchMessage && (
+                <p className="mb-6 text-sm font-medium text-red-500 animate-in fade-in slide-in-from-top-1 text-center bg-red-50 dark:bg-red-900/10 py-2 rounded-xl border border-red-100 dark:border-red-900/20">
+                    {searchMessage}
+                </p>
+            )}
 
             {error && <div className="mb-4 text-red-500 font-medium">{error}</div>}
 

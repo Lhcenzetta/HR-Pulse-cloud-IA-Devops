@@ -109,6 +109,12 @@ def job_skills(db : Session = Depends(get_db),cre = Depends(verfiy_token)):
     return db.query(JobOffer).filter().all()
 
 
+@app.get("/jobs/search/")
+def search_jobs(title: str, db: Session = Depends(get_db), cre = Depends(verfiy_token)):
+    jobs = db.query(JobOffer).filter(JobOffer.job_title.ilike(f"%{title}%")).all()
+    return jobs
+
+
 @app.get("/jobs/{id}")
 def get_job_id(id: int, db: Session = Depends(get_db),cre = Depends(verfiy_token)):
     job = db.query(JobOffer).filter(JobOffer.id == id).first()

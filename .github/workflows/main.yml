@@ -27,7 +27,13 @@ jobs:
       - name: Install dependencies
         run: |
           cd backend
-          uv sync --no-dev
+          uv sync
+
+      - name: Run tests
+        run: |
+          export PYTHONPATH=$PYTHONPATH:$(pwd)/backend/app
+          cd backend
+          uv run pytest ../tests
 
   frontend-ci:
     name: Frontend CI

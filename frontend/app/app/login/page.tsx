@@ -6,14 +6,14 @@ export default function Signin() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(''); // État pour l'erreur
+    const [error, setError] = useState('');
     const router = useRouter();
 
-    const handlesubmit = async (e) => {
+    const handlesubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setError(''); // Réinitialiser l'erreur au début
-        
+        setError('');
+
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000'}/login`, {
                 method: 'POST',
@@ -21,21 +21,21 @@ export default function Signin() {
                     'Content-Type': 'application/json',
                     'accept': 'application/json'
                 },
-                body: JSON.stringify({ 
+                body: JSON.stringify({
                     "username": username,
-                    "passwordhash": password 
+                    "passwordhash": password
                 }),
             });
 
             const data = await response.json();
-            
+
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                localStorage.setItem('user_id', data.user_id);
+                // The backend doesn't explicitly return user_id in the login response based on main.py, 
+                // but it's often useful. For now, we follow the token-based auth.
                 router.push('/dashboard');
             } else {
-                // Message d'erreur personnalisé au lieu de l'alerte
-                setError(data.message || 'Invalid username or password. Please try again.');
+                setError(data.detail || 'Invalid username or password. Please try again.');
             }
         } catch (err) {
             setError('Unable to connect to the server. Please check your connection.');
@@ -45,17 +45,16 @@ export default function Signin() {
     };
 
     return (
-        <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 font-sans">
-            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 p-10">
-                
+        <div className="min-h-screen bg-[#f3f4f6] flex items-center justify-center p-4 font-sans dark:bg-zinc-950">
+            <div className="max-w-md w-full bg-white rounded-3xl shadow-xl border border-slate-100 p-10 dark:bg-zinc-900 dark:border-zinc-800">
+
                 <div className="text-center mb-10">
-                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Login</h1>
-                    <p className="text-slate-500 mt-2 text-sm uppercase tracking-wider font-semibold">
+                    <h1 className="text-3xl font-bold text-slate-900 tracking-tight dark:text-white">Login</h1>
+                    <p className="text-slate-500 mt-2 text-sm uppercase tracking-wider font-semibold dark:text-zinc-400">
                         HR Analysis Portal
                     </p>
                 </div>
 
-                {/* Message d'erreur stylisé */}
                 {error && (
                     <div className="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-700 text-sm rounded-r-lg animate-in fade-in slide-in-from-top-2">
                         <div className="flex items-center">
@@ -68,40 +67,40 @@ export default function Signin() {
                 <form onSubmit={handlesubmit} className="space-y-5">
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Username</label>
-                        <input 
-                            type="text" 
+                        <input
+                            type="text"
                             required
                             placeholder="Your username"
-                            className="modern-input"
-                            value={username} 
-                            onChange={(e) => setUsername(e.target.value)} 
+                            className="modern-input dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
                         />
                     </div>
 
                     <div className="space-y-1">
                         <label className="text-xs font-bold text-slate-400 uppercase tracking-widest ml-1">Password</label>
-                        <input 
-                            type="password" 
+                        <input
+                            type="password"
                             required
                             placeholder="Your password"
-                            className="modern-input"
-                            value={password} 
-                            onChange={(e) => setPassword(e.target.value)} 
+                            className="modern-input dark:bg-zinc-800 dark:border-zinc-700 dark:text-white"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                     </div>
 
-                    <button 
-                        type="submit" 
+                    <button
+                        type="submit"
                         disabled={loading}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-100 disabled:opacity-70 mt-4 flex items-center justify-center"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-blue-100 disabled:opacity-70 mt-4 flex items-center justify-center dark:shadow-none"
                     >
                         {loading ? <div className="h-5 w-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : "Log In"}
                     </button>
                 </form>
 
-                <div className="mt-8 text-center text-sm text-slate-500">
+                <div className="mt-8 text-center text-sm text-slate-500 dark:text-zinc-400">
                     Don't have an account?{" "}
-                    <button onClick={() => router.push('/Signup')} className="text-blue-600 font-bold hover:underline">Sign up now</button>
+                    <button onClick={() => router.push('/Signup')} className="text-blue-600 font-bold hover:underline dark:text-blue-400">Sign up now</button>
                 </div>
             </div>
 
@@ -120,6 +119,11 @@ export default function Signin() {
                     background-color: white;
                     border-color: #3b82f6;
                     box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+                }
+                :global(.dark) .modern-input:focus {
+                    background-color: #18181b;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
                 }
             `}</style>
         </div>

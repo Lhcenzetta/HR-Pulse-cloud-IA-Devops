@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends,HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from database import engine, get_db, Base
 from shcema import CreateUser, Checkuser,listcheck
 from sqlalchemy.orm import Session
@@ -16,6 +17,14 @@ import pandas as pd
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 load_dotenv()
 model_path  = os.getenv("model_path")

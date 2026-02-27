@@ -10,7 +10,7 @@ export default function Home() {
         <div className="text-xl font-bold tracking-tight">HR-Pulse <span className="text-blue-600">.</span></div>
         <div className="space-x-4">
           <button onClick={() => router.push("/login")} className="px-4 py-2 text-sm font-medium hover:text-blue-600 transition-colors">Log in</button>
-          <button  className="px-4 py-2 text-sm font-medium bg-zinc-900 text-white dark:bg-white dark:text-black rounded-full hover:opacity-90 transition-opacity">
+          <button onClick={() => router.push("/Signup")} className="px-4 py-2 text-sm font-medium bg-zinc-900 text-white dark:bg-white dark:text-black rounded-full hover:opacity-90 transition-opacity">
             Sign up
           </button>
         </div>

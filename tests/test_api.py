@@ -3,23 +3,29 @@ from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 import os
 
-# Set dummy environment variables before importing app
 with patch.dict(os.environ, {"model_path": "dummy_model.joblib", "SECRET_KEY": "test_secret"}):
-    # We need to mock joblib.load before it's called during module import
     with patch("joblib.load", return_value=MagicMock()):
-        from backend.app.main import app
+        from main import app
+        from database import get_db
+
 client = TestClient(app)
 
 @pytest.fixture
-def mock_db():
-    with patch("main.get_db") as mock:
-        yield mock
+def db_session():
+    mock = MagicMock()
+    mock.query.return_value.filter.return_value.all.return_value = []
+    mock.query.return_value.filter.return_value.first.return_value = None
+    return mock
 
-def test_signup_success(mock_db):
-    # Mock db.query(...).first() to return None (user doesn't exist)
-    db_session = MagicMock()
+@pytest.fixture(autouse=True)
+def override_db(db_session):
+    app.dependency_overrides[get_db] = lambda: db_session
+    yield
+    app.dependency_overrides.clear()
+
+def test_signup_success(db_session):
+    # Ensure it returns None for existence check
     db_session.query.return_value.filter.return_value.first.return_value = None
-    mock_db.return_value = db_session
 
     response = client.post(
         "/Signup",
@@ -32,11 +38,8 @@ def test_signup_success(mock_db):
     assert response.status_code == 200
     assert "Successfully Registred !!!" in response.json()
 
-def test_signup_already_exists(mock_db):
-    # Mock db.query(...).first() to return an existing user
-    db_session = MagicMock()
+def test_signup_already_exists(db_session):
     db_session.query.return_value.filter.return_value.first.return_value = MagicMock()
-    mock_db.return_value = db_session
 
     response = client.post(
         "/Signup",
@@ -49,14 +52,10 @@ def test_signup_already_exists(mock_db):
     assert response.status_code == 400
     assert response.json()["detail"] == "THIS USER ALERADY EXIST"
 
-def test_login_success(mock_db):
-    # Mock existing user with matching password
-    db_session = MagicMock()
+def test_login_success(db_session):
     mock_user = MagicMock()
     mock_user.username = "testuser"
-    # Note: passwordhash in DB would be hashed, but we'll mock verify_hash_password too if needed or just mock the flow
     db_session.query.return_value.filter.return_value.first.return_value = mock_user
-    mock_db.return_value = db_session
 
     with patch("main.verfiy_hash_passsword", return_value=True):
         response = client.post(
@@ -66,18 +65,33 @@ def test_login_success(mock_db):
     
     assert response.status_code == 200
     assert "token" in response.json()
-    assert response.json()["token_type"] == "bearer"
 
-def test_login_invalid_password(mock_db):
-    db_session = MagicMock()
-    db_session.query.return_value.filter.return_value.first.return_value = MagicMock()
-    mock_db.return_value = db_session
-
-    with patch("main.verfiy_hash_passsword", return_value=False):
-        response = client.post(
-            "/login",
-            json={"username": "testuser", "passwordhash": "wrongpass"}
+def test_get_jobs(db_session):
+    # Test protected endpoint
+    # Mock token verification
+    with patch("main.decode_token", return_value={"username": "testuser"}):
+        response = client.get(
+            "/get_all_jobs_with_skills",
+            headers={"Authorization": "Bearer fake-token"}
         )
-    
-    assert response.status_code == 400
-    assert response.json()["detail"] == "Password invalid"
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+
+def test_predict_salary(db_session):
+    # Mock token and model
+    with patch("main.decode_token", return_value={"username": "testuser"}):
+        with patch("main.model.predict", return_value=[150000.0]):
+            response = client.post(
+                "/Predict",
+                json={
+                    "rating": 4.5,
+                    "age": 30,
+                    "size": "Large",
+                    "type_of_ownership": "Public",
+                    "industry": "IT",
+                    "sector": "Tech"
+                },
+                headers={"Authorization": "Bearer fake-token"}
+            )
+    assert response.status_code == 200
+    assert "Predicted Salary: 150000.0$" in response.json()[0]

@@ -3,7 +3,6 @@ import pandas as pd
 import pytest
 
 def test_ml_data_structure():
-    # Simple test to verify the schema expected by the model
     data = {
         'rating': [4.5],
         'age': [30],
@@ -17,7 +16,6 @@ def test_ml_data_structure():
     assert list(df.columns) == ['rating', 'age', 'size', 'type_of_ownership', 'industry', 'sector']
 
 def test_mock_prediction():
-    # Test that model.predict would work with correct input
     mock_model = MagicMock()
     mock_model.predict.return_value = [100000.0]
     

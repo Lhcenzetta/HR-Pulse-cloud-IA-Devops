@@ -3,7 +3,7 @@ from fastapi.testclient import TestClient
 from unittest.mock import MagicMock, patch
 import os
 
-with patch.dict(os.environ, {"model_path": "dummy_model.joblib", "SECRET_KEY": "test_secret"}):
+with patch.dict(os.environ, {"model_path": "dummy_model.joblib", "SECRET_KEY": "test_secret", "data_url": "sqlite:///:memory:"}):
     with patch("joblib.load", return_value=MagicMock()):
         from main import app
         from database import get_db

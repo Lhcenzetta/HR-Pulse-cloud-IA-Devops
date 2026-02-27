@@ -5,3 +5,4 @@ infra
 data
 .python-version
 pyproject.toml
+.pytest_cache

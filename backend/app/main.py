@@ -16,6 +16,27 @@ from dotenv import load_dotenv
 import pandas as pd 
 Base.metadata.create_all(bind=engine)
 
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.sdk.resources import RESOURCE_ATTRIBUTES, Resource
+from azure.ai.textanalytics import TextAnalyticsClient
+from azure.core.credentials import AzureKeyCredential
+
+load_dotenv()
+
+# OpenTelemetry Setup
+resource = Resource(attributes={
+    RESOURCE_ATTRIBUTES.SERVICE_NAME: "backend-hr-pulse"
+})
+tracer_provider = TracerProvider(resource=resource)
+otlp_exporter = OTLPSpanExporter(endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://jaeger:4317"), insecure=True)
+tracer_provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+
 app = FastAPI()
 
 app.add_middleware(
@@ -26,7 +47,13 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-load_dotenv()
+FastAPIInstrumentor.instrument_app(app)
+
+# Azure AI Client
+endpoint = os.getenv("endpoint")
+key = os.getenv("api_key")
+ai_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+
 model_path  = os.getenv("model_path")
 model = joblib.load(model_path)
 algorithme = "HS256"
@@ -134,6 +161,31 @@ def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfi
     db.delete(user)
     db.commit()
     return {"detail" : "User deleted successfully"}
+
+
+@app.post("/extract-skills")
+def extract_skills(text: str, cre=Depends(verfiy_token)):
+    with tracer.start_as_current_span("azure_ai_extraction") as span:
+        span.set_attribute("azure.endpoint", endpoint)
+        
+        start_time = time.time()
+        try:
+            poller = ai_client.begin_extract_key_phrases([text])
+            result = poller.result()
+            
+            skills = []
+            for doc in result:
+                if not doc.is_error:
+                    skills.extend(doc.key_phrases)
+            
+            duration = (time.time() - start_time) * 1000
+            span.set_attribute("azure.duration_ms", duration)
+            
+            return {"skills": skills, "duration_ms": duration}
+        except Exception as e:
+            span.record_exception(e)
+            span.set_status(trace.Status(trace.StatusCode.ERROR))
+            raise HTTPException(status_code=500, detail=str(e))
 
 
 

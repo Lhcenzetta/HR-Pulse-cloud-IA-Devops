@@ -4,12 +4,15 @@ from sqlalchemy.ext.declarative import declarative_base
 import os
 from dotenv import load_dotenv
 
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+
 load_dotenv()
 
 # data_path = f"postgresql+psycopg2://{os.getenv('user')}:{os.getenv('password')}@{os.getenv('host')}:{os.getenv('port')}/{os.getenv('database')}"
 data_path = os.getenv("data_url")
 
 engine = create_engine(data_path)
+SQLAlchemyInstrumentor().instrument(engine=engine)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

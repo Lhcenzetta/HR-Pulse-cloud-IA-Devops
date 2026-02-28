@@ -50,8 +50,8 @@ app.add_middleware(
 FastAPIInstrumentor.instrument_app(app)
 
 # Azure AI Client
-endpoint = os.getenv("endpoint")
-key = os.getenv("api_key")
+endpoint = os.getenv("endpoint") or "https://placeholder-endpoint.api.cognitive.microsoft.com/"
+key = os.getenv("api_key") or "placeholder_key"
 ai_client = TextAnalyticsClient(endpoint=endpoint, credential=AzureKeyCredential(key))
 
 model_path  = os.getenv("model_path")

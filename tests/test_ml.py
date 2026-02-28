@@ -18,7 +18,7 @@ def test_ml_data_structure():
 def test_mock_prediction():
     mock_model = MagicMock()
     mock_model.predict.return_value = [100000.0]
-    
+
     test_data = pd.DataFrame({
         'rating': [4.0],
         'age': [25],

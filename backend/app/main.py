@@ -21,7 +21,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.sdk.resources import RESOURCE_ATTRIBUTES, Resource
+from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 
@@ -29,7 +29,7 @@ load_dotenv()
 
 # OpenTelemetry Setup
 resource = Resource(attributes={
-    RESOURCE_ATTRIBUTES.SERVICE_NAME: "backend-hr-pulse"
+    SERVICE_NAME: "backend-hr-pulse"
 })
 tracer_provider = TracerProvider(resource=resource)
 otlp_exporter = OTLPSpanExporter(endpoint=os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://jaeger:4317"), insecure=True)

@@ -37,7 +37,7 @@ export default function Signin() {
             } else {
                 setError(data.detail || 'Invalid username or password. Please try again.');
             }
-        } catch (err) {
+        } catch {
             setError('Unable to connect to the server. Please check your connection.');
         } finally {
             setLoading(false);
@@ -99,7 +99,7 @@ export default function Signin() {
                 </form>
 
                 <div className="mt-8 text-center text-sm text-slate-500 dark:text-zinc-400">
-                    Don't have an account?{" "}
+                    Don&apos;t have an account?{" "}
                     <button onClick={() => router.push('/Signup')} className="text-blue-600 font-bold hover:underline dark:text-blue-400">Sign up now</button>
                 </div>
             </div>

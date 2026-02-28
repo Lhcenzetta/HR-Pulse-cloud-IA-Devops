@@ -36,7 +36,7 @@ export default function JobList() {
                 } else {
                     setError('Unable to load jobs.');
                 }
-            } catch (err) {
+            } catch {
                 setError('Network error while fetching jobs.');
             } finally {
                 setLoading(false);

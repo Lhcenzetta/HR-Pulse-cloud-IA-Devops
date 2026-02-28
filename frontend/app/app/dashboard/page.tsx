@@ -6,17 +6,19 @@ import JobList from '../components/JobList';
 
 export default function Dashboard() {
     const [activeTab, setActiveTab] = useState('predictor');
-    const [token, setToken] = useState<string | null>(null);
+    const [token] = useState<string | null>(() => {
+        if (typeof window !== 'undefined') {
+            return localStorage.getItem('token');
+        }
+        return null;
+    });
     const router = useRouter();
 
     useEffect(() => {
-        const storedToken = localStorage.getItem('token');
-        if (!storedToken) {
+        if (!token) {
             router.push('/login');
-        } else {
-            setToken(storedToken);
         }
-    }, [router]);
+    }, [token, router]);
 
     const handleLogout = () => {
         localStorage.removeItem('token');

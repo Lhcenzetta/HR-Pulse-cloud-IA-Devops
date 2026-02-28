@@ -47,7 +47,7 @@ export default function Signup() {
             } else {
                 setError(data.detail || 'Registration failed. Please try again.');
             }
-        } catch (err) {
+        } catch {
             setError('Unable to connect to the server. Please check your connection.');
         } finally {
             setLoading(false);

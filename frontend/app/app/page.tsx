@@ -1,6 +1,4 @@
 "use client";
-import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 export default function Home() {
   const router = useRouter();
@@ -29,14 +27,14 @@ export default function Home() {
             </span>
           </h1>
           <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto leading-relaxed">
-            Moderniser le recrutement en transformant des données textuelles brutes en une base de connaissances structurée via l'IA Azure et le MLOps.
+            Moderniser le recrutement en transformant des données textuelles brutes en une base de connaissances structurée via l&apos;IA Azure et le MLOps.
           </p>
         </section>
 
         {/* Project Description Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-20">
           <div className="p-8 rounded-3xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/50 shadow-sm">
-            <h3 className="text-xl font-bold mb-4">L'Objectif</h3>
+            <h3 className="text-xl font-bold mb-4">L&apos;Objectif</h3>
             <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
               Extraire automatiquement des compétences clés (NER) via <strong>Azure AI Language</strong> et prédire les fourchettes salariales pour aider les recruteurs à rester compétitifs sur le marché.
             </p>
@@ -55,7 +53,7 @@ export default function Home() {
 
         {/* Workflow Image Placeholder */}
         <div className="mb-20 rounded-2xl overflow-hidden border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 aspect-video flex items-center justify-center text-zinc-400 italic">
-          <img src="/Users/lait-zet/Desktop/HR-Pulse-cloud-IA-Devops/frontend/app/public/Screenshot 2026-02-25 at 3.05.43 AM.png" alt="" />
+          <img src="/Screenshot 2026-02-25 at 3.05.43 AM.png" alt="Project Workflow" />
         </div>
 
         {/* Technical Roadmap */}

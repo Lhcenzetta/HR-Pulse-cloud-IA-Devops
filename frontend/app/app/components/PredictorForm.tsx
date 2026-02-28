@@ -39,7 +39,7 @@ export default function PredictorForm() {
             } else {
                 setError(data.detail || 'Failed to get prediction.');
             }
-        } catch (err) {
+        } catch {
             setError('Error connecting to the prediction server.');
         } finally {
             setLoading(false);

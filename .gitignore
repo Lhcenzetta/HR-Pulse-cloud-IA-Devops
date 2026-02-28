@@ -1,8 +1,6 @@
 .env
 .venv
-uv.lock
 infra
 data
 .python-version
-pyproject.toml
 .pytest_cache

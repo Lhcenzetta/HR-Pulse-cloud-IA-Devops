@@ -161,33 +161,3 @@ def delete_user(user_id :int , db:Session = Depends(get_db), cre = Depends(verfi
     db.delete(user)
     db.commit()
     return {"detail" : "User deleted successfully"}
-
-
-@app.post("/extract-skills")
-def extract_skills(text: str, cre=Depends(verfiy_token)):
-    with tracer.start_as_current_span("azure_ai_extraction") as span:
-        span.set_attribute("azure.endpoint", endpoint)
-        
-        start_time = time.time()
-        try:
-            poller = ai_client.begin_extract_key_phrases([text])
-            result = poller.result()
-            
-            skills = []
-            for doc in result:
-                if not doc.is_error:
-                    skills.extend(doc.key_phrases)
-            
-            duration = (time.time() - start_time) * 1000
-            span.set_attribute("azure.duration_ms", duration)
-            
-            return {"skills": skills, "duration_ms": duration}
-        except Exception as e:
-            span.record_exception(e)
-            span.set_status(trace.Status(trace.StatusCode.ERROR))
-            raise HTTPException(status_code=500, detail=str(e))
-
-
-
-
-  

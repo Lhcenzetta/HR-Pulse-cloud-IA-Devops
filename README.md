@@ -6,7 +6,6 @@ HR-Pulse est une solution **Data Engineering + IA + Cloud** qui aide les profess
 - extraire automatiquement les **compétences clés** des offres d'emploi via l'IA Azure ;
 - **prédire les salaires** à partir d'un modèle de Machine Learning ;
 - rechercher et consulter les offres d'emploi structurées.
-
 Développé dans le cadre de **Projet-11 · Simplon Academy**.
 ---
 ## ✨ Fonctionnalités

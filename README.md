@@ -9,7 +9,6 @@ HR-Pulse est une solution **Data Engineering + IA + Cloud** qui aide les profess
 Développé dans le cadre de **Projet-11 · Simplon Academy**.
 ---
 ## ✨ Fonctionnalités
-
 - 🔐 **Authentification JWT** — inscription / connexion sécurisée (mots de passe hachés avec Argon2).
 - 🧠 **Prédiction de salaire** — modèle `RandomForestRegressor` (Scikit-learn) entraîné sur le jeu de données *Kaggle "Data Science Job Postings"*, exposé via un endpoint REST.
 - 🔎 **Extraction de compétences** — appel à **Azure AI Text Analytics** pour l'extraction d'entités / mots-clés (NER).

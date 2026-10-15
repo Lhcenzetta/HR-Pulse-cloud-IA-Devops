@@ -22,7 +22,6 @@ dependencies = [
     "azure-ai-textanalytics>=5.3.0",
 ]
 requires-python = ">=3.13"
-
 [dependency-groups]
 dev = [
     "httpx>=0.28.1",

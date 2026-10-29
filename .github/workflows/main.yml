@@ -1,11 +1,9 @@
 name: HR-Pulse CI
-
 on:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
 jobs:
   backend-ci:
     name: Backend CI

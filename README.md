@@ -1,7 +1,6 @@
 # HR-Pulse 💓
 
 **Pipeline IA intelligente & conteneurisation native** — Moderniser le recrutement en transformant des données textuelles brutes (offres d'emploi) en une base de connaissances structurée et exploitable.
-
 HR-Pulse est une solution **Data Engineering + IA + Cloud** qui aide les professionnels des RH à :
 - extraire automatiquement les **compétences clés** des offres d'emploi via l'IA Azure ;
 - **prédire les salaires** à partir d'un modèle de Machine Learning ;
